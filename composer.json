@@ -1,0 +1,19 @@
+{
+    "name": "dylan/tubee-server",
+    "authors": [
+        {
+            "name": "Dylan Ngo",
+            "email": "it.tinhngo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Tubee\\": "src/Tubee"
+        }
+    },
+    "require": {
+        "clue/framework-x": "dev-main",
+        "react/mysql": "^0.5.6",
+        "react/async": "^4@dev || ^3@dev"
+    }
+}
