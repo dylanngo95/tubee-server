@@ -14,8 +14,18 @@ class HomeController
 {
     public function __invoke(ServerRequestInterface $request): Response
     {
-        return Response::plaintext(
-            "Hello my friend!\n"
+        $execString = 'ps -f -u dylan 2>&1 | grep youtube-dl';
+        $process = "";
+        exec($execString, $process);
+
+        $listProcess = "";
+        foreach ($process as $item) {
+            $listProcess .= "<li>${item}</li>";
+        }
+        $html = "<html><body><h1>Task running:</h1><ul>${listProcess}</ul></body></html>";
+
+        return Response::html(
+            $html
         );
     }
 }

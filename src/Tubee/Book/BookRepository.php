@@ -6,6 +6,7 @@ namespace Tubee\Book;
 
 use React\MySQL\ConnectionInterface;
 use React\MySQL\QueryResult;
+use Tubee\Mysql\Mysql;
 use function React\Async\await;
 
 /**
@@ -13,11 +14,14 @@ use function React\Async\await;
  */
 class BookRepository
 {
-    private ConnectionInterface $db;
+    /**
+     * @var ConnectionInterface|\React\MySQL\Io\LazyConnection|null $db
+     */
+    private $db;
 
-    public function __construct(ConnectionInterface $db)
+    public function __construct(Mysql $mysql)
     {
-        $this->db = $db;
+        $this->db = $mysql->getConnection();
     }
 
     /**

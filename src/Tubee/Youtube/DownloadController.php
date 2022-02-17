@@ -17,10 +17,10 @@ class DownloadController
         $video = $request->getAttribute('video');
         echo $video;
         $youtube = "https://www.youtube.com/watch?v=${video}";
-        $this->execShell("cd ~/Desktop && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube}");
+        $this->execShell("cd /home/dylan/mp3s && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube}");
 
         return Response::plaintext(
-            "Hello " . $youtube . "!\n"
+            "Downloading " . $youtube . "!\n"
         );
     }
 

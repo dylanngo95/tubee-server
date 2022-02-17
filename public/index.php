@@ -1,19 +1,18 @@
 <?php
 
-use React\MySQL\Factory;
 use Tubee\Book\BookController;
-use Tubee\Book\BookRepository;
 use Tubee\Home\HomeController;
+use Tubee\Mysql\Mysql;
 use Tubee\Youtube\DownloadController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$credentials = 'tubee:123456@localhost/bookstore?idle=0.001';
-$connection = (new Factory())->createLazyConnection($credentials);
+$environments = include_once 'env.php';
+$dbConfig = $environments['db'];
 
 $container = new FrameworkX\Container([
-    BookRepository::class => function() use($connection) {
-        return new BookRepository($connection);
+    Mysql::class => function() use($dbConfig) {
+        return new Mysql($dbConfig);
     }
 ]);
 
