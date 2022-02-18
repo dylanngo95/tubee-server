@@ -1,4 +1,4 @@
 /data
 /vendor
 .env
-/public/env.php
+/public/app/env.php

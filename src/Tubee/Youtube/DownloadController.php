@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tubee\Youtube;
 
+use Base\Config\Environment;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
@@ -12,12 +13,22 @@ use React\Http\Message\Response;
  */
 class DownloadController
 {
+    /**
+     * @var Environment $environment
+     */
+    protected $environment;
+
+    public function __construct(Environment $environment)
+    {
+        $this->environment = $environment;
+    }
+
     public function __invoke(ServerRequestInterface $request): Response
     {
         $video = $request->getAttribute('video');
-        echo $video;
+        $staticPath = $this->environment->getStaticPath();
         $youtube = "https://www.youtube.com/watch?v=${video}";
-        $this->execShell("cd /home/dylan/mp3s && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube}");
+        $this->execShell("cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube}");
 
         return Response::plaintext(
             "Downloading " . $youtube . "!\n"

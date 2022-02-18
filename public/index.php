@@ -1,18 +1,20 @@
 <?php
 
+use Base\Config\Environment;
+use Base\Mysql\Mysql;
 use Tubee\Book\BookController;
 use Tubee\Home\HomeController;
-use Tubee\Mysql\Mysql;
 use Tubee\Youtube\DownloadController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$environments = include_once 'env.php';
-$dbConfig = $environments['db'];
+\define('PB', \dirname(__DIR__));
 
+$environment = new Environment();
 $container = new FrameworkX\Container([
-    Mysql::class => function() use($dbConfig) {
-        return new Mysql($dbConfig);
+    Environment::class => fn() => new Environment(),
+    Mysql::class => function() use($environment) {
+        return new Mysql($environment);
     }
 ]);
 

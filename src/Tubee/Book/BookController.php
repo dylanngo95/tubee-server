@@ -13,7 +13,10 @@ use React\Http\Message\Response;
  */
 class BookController
 {
-    private BookRepository $repository;
+    /**
+     * @var BookRepository $repository
+     */
+    private $repository;
 
     public function __construct(BookRepository $repository)
     {
@@ -26,7 +29,11 @@ class BookController
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $year = $request->getAttribute('year');
-        $book = $this->repository->findBook($year);
+        try {
+            $book = $this->repository->findBook($year);
+        } catch (\Exception $exception) {
+            echo $exception;
+        }
 
         if ($book === null) {
             return Response::json(
