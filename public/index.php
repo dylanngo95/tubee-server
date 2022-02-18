@@ -4,7 +4,8 @@ use Base\Config\Environment;
 use Base\Mysql\Mysql;
 use Tubee\Book\BookController;
 use Tubee\Home\HomeController;
-use Tubee\Youtube\DownloadController;
+use Tubee\Setup\SetupController;
+use Tubee\Youtube\YoutubeController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -21,7 +22,8 @@ $container = new FrameworkX\Container([
 $app = new FrameworkX\App($container);
 
 $app->get('/', HomeController::class);
+$app->get('/init', SetupController::class);
 $app->get('/book/{year}', BookController::class);
-$app->get('/youtube/{video}', DownloadController::class);
+$app->get('/youtube/{video}', YoutubeController::class);
 
 $app->run();

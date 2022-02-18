@@ -20,7 +20,6 @@ class Environment
     }
 
     public function getStaticPath() {
-        $environment = $this->getEnvironment();
-        return $environment['static'];
+        return PB . '/public/static';
     }
 }

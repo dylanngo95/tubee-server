@@ -2,3 +2,5 @@
 /vendor
 .env
 /public/app/env.php
+/public/static
+.idea

@@ -6,7 +6,6 @@ namespace Tubee\Book;
 
 use Base\Mysql\Mysql;
 use React\MySQL\QueryResult;
-use function React\Async\await;
 
 /**
  * Class BookRepository
@@ -26,18 +25,18 @@ class BookRepository
     /**
      * @throws \Throwable
      */
-    public function findBook(string $year): ?Book
+    public function findBook(string $year)
     {
-        $result = await($this->connection->query(
-            'SELECT title FROM book WHERE year = ?',
+        $result =  yield $this->connection->query(
+            'SELECT name FROM youtube WHERE hash = ?',
             [$year]
-        ));
+        );
         assert($result instanceof QueryResult);
 
         if (count($result->resultRows) === 0) {
             return null;
         }
 
-        return new Book($result->resultRows[0]['title']);
+        return new Book($result->resultRows[0]['name']);
     }
 }
