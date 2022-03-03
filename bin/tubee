@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+
+use Base\Config\Environment;
+
+if (PHP_SAPI !== 'cli') {
+    echo 'bin/tubee must be run as a CLI application';
+    exit(1);
+}
+
+try {
+    require __DIR__ . '/../public/app/bootstrap.php';
+} catch (\Exception $e) {
+    echo 'Autoload error: ' . $e->getMessage();
+    exit(1);
+}
+
+try {
+    $environment = new Environment();
+    $db = $environment->getDBConfig();
+
+    $mode = 'default';
+    $userName = $db['connection'][$mode]['username'] ?? null;
+    $passWord = $db['connection'][$mode]['password'] ?? null;
+    $dbName = $db['connection'][$mode]['dbname'] ?? null;
+    $host = $db['connection'][$mode]['host'] ?? null;
+
+    $connection = new PDO("mysql:host=$host;dbname=$dbName;charset=UTF8", $userName, $passWord);
+    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (\Exception $e) {
+    echo 'Load Application error: ' . $e;
+    exit();
+}
+
+$hash = $argv[1];
+
+try {
+    $staticPath = $environment->getStaticPath();
+    $youtube = "https://www.youtube.com/watch?v=${hash}";
+    echo $youtube . "\n";
+    insertYoutube($connection, $hash, $youtube);
+    $output = shell_exec("cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube} | grep Destination ");
+    echo $output . "\n";
+    $lines = preg_split("/\r\n|\n|\r/", $output);
+    $name = '';
+    foreach ($lines as $line) {
+        $re = '/^\[ffmpeg] Destination:/';
+        preg_match_all($re, $line, $matches, PREG_SET_ORDER, 0);
+        if (count($matches)) {
+            $name = substr($line, strlen($matches[0][0]));
+            $name = trim($name);
+        }
+    }
+    updateYoutube($connection, $hash, $name, 1);
+} catch (\Exception $e) {
+    updateYoutube($connection, $hash, null, 0);
+    echo 'Downloading error:' . $e;
+    exit(1);
+}
+
+function insertYoutube($connection, $hash, $link)
+{
+    $data = [
+        'hash' => $hash,
+        'link' => $link,
+        'status' => 2,
+    ];
+    $sql = "INSERT INTO youtube (hash, link, status) VALUES (:hash, :link, :status)";
+    $stmt= $connection->prepare($sql);
+    return $stmt->execute($data);
+}
+
+function updateYoutube($connection, $hash, $name, $status)
+{
+    $data = [
+        'hash' => $hash,
+        'status' => $status,
+        'name' => $name
+    ];
+    $sql = "UPDATE youtube SET status=:status, name=:name WHERE hash=:hash";
+    $stmt= $connection->prepare($sql);
+    return $stmt->execute($data);
+}

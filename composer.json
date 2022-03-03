@@ -8,12 +8,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Tubee\\": "src/Tubee"
+            "Tubee\\": "src/Tubee",
+            "Base\\": "src/Base"
         }
     },
     "require": {
         "clue/framework-x": "dev-main",
         "react/mysql": "^0.5.6",
-        "react/async": "^4@dev || ^3@dev"
+        "clue/stdio-react": "^2.5"
     }
 }

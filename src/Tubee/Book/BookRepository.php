@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tubee\Book;
 
-use React\MySQL\ConnectionInterface;
+use Base\Mysql\Mysql;
 use React\MySQL\QueryResult;
-use Tubee\Mysql\Mysql;
-use function React\Async\await;
 
 /**
  * Class BookRepository
@@ -15,30 +13,30 @@ use function React\Async\await;
 class BookRepository
 {
     /**
-     * @var ConnectionInterface|\React\MySQL\Io\LazyConnection|null $db
+     * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection|null
      */
-    private $db;
+    private $connection;
 
     public function __construct(Mysql $mysql)
     {
-        $this->db = $mysql->getConnection();
+        $this->connection = $mysql->getConnection();
     }
 
     /**
      * @throws \Throwable
      */
-    public function findBook(string $year): ?Book
+    public function findBook(string $year)
     {
-        $result = await($this->db->query(
-            'SELECT title FROM book WHERE year = ?',
+        $result =  yield $this->connection->query(
+            'SELECT name FROM youtube WHERE hash = ?',
             [$year]
-        ));
+        );
         assert($result instanceof QueryResult);
 
         if (count($result->resultRows) === 0) {
             return null;
         }
 
-        return new Book($result->resultRows[0]['title']);
+        return new Book($result->resultRows[0]['name']);
     }
 }

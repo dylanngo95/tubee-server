@@ -9,7 +9,6 @@ namespace Tubee\Book;
  */
 class Book
 {
-    /** @readonly **/
     public string $title;
 
     public function __construct(string $title)

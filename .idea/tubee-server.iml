@@ -22,7 +22,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/react/promise" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/react/promise-timer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/react/mysql" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/react/async" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/clue/utf8-react" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/clue/stdio-react" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/clue/term-react" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
