@@ -28,7 +28,7 @@ class BookController
      */
     public function __invoke(ServerRequestInterface $request)
     {
-        $year = $request->getAttribute('year');
+        $year = $request->getAttribute('id');
         $book = yield from $this->repository->findBook($year);
 
         if ($book === null) {

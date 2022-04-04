@@ -23,7 +23,7 @@ $app = new FrameworkX\App($container);
 
 $app->get('/', HomeController::class);
 $app->get('/init', SetupController::class);
-$app->get('/book/{year}', BookController::class);
+$app->get('/find/{id}', BookController::class);
 $app->get('/youtube/{video}', YoutubeController::class);
 
 $app->run();

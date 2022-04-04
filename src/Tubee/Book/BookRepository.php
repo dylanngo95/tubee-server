@@ -17,8 +17,11 @@ class BookRepository
      */
     private $connection;
 
+    private $mysql;
+
     public function __construct(Mysql $mysql)
     {
+        $this->mysql = $mysql;
         $this->connection = $mysql->getConnection();
     }
 
@@ -27,8 +30,9 @@ class BookRepository
      */
     public function findBook(string $year)
     {
-        $result =  yield $this->connection->query(
-            'SELECT name FROM youtube WHERE hash = ?',
+        $connection = $this->mysql->getConnection();
+        $result =  yield $connection->query(
+            'SELECT name FROM youtube WHERE id = ?',
             [$year]
         );
         assert($result instanceof QueryResult);
