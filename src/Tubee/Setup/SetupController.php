@@ -24,8 +24,8 @@ class SetupController
 
     public function __invoke(ServerRequestInterface $request)
     {
-//        $this->setupRepository->createInitTable();
-        $this->setupRepository->insertDumpData();
+        $this->setupRepository->createInitTable();
+//        $this->setupRepository->insertDumpData();
         return Response::json([
             'data' => 'init db completed'
         ]);

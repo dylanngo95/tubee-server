@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Base\Config;
+namespace Framework\Config;
 
 /**
  * Class Environment

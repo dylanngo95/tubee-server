@@ -1,7 +1,8 @@
 <?php
 
-use Base\Config\Environment;
-use Base\Mysql\Mysql;
+use Framework\Config\Environment;
+use Framework\Mysql\Mysql;
+use Tubee\Add\AddController;
 use Tubee\Book\BookController;
 use Tubee\Home\HomeController;
 use Tubee\Setup\SetupController;
@@ -23,6 +24,7 @@ $app = new FrameworkX\App($container);
 
 $app->get('/', HomeController::class);
 $app->get('/init', SetupController::class);
+$app->get('/new/{number}', AddController::class);
 $app->get('/find/{id}', BookController::class);
 $app->get('/youtube/{video}', YoutubeController::class);
 

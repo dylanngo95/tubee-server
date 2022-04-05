@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Base\Mysql;
+namespace Framework\Mysql;
 
-use Base\Config\Environment;
+use Framework\Config\Environment;
 use React\MySQL\Factory;
 
 /**

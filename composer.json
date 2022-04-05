@@ -9,7 +9,7 @@
     "autoload": {
         "psr-4": {
             "Tubee\\": "src/Tubee",
-            "Base\\": "src/Base"
+            "Framework\\": "src/Framework"
         }
     },
     "require": {

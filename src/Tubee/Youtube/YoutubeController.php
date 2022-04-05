@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tubee\Youtube;
 
-use Base\Config\Environment;
+use Framework\Config\Environment;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 

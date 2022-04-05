@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/Tubee" isTestSource="false" packagePrefix="Tubee\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/Base" isTestSource="false" packagePrefix="Base\" />
+      <sourceFolder url="file://$MODULE_DIR$/src/Framework" isTestSource="false" packagePrefix="Base\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ringcentral/psr7" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/evenement/evenement" />

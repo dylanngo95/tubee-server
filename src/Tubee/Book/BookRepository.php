@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tubee\Book;
 
-use Base\Mysql\Mysql;
+use Framework\Mysql\Mysql;
 use React\MySQL\QueryResult;
 
 /**
