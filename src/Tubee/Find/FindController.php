@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tubee\Book;
+namespace Tubee\Find;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
 /**
- * Class BookController
+ * Class FindController
  */
-class BookController
+class FindController
 {
     /**
-     * @var BookRepository $repository
+     * @var FindRepository $repository
      */
     private $repository;
 
-    public function __construct(BookRepository $repository)
+    public function __construct(FindRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -29,17 +29,17 @@ class BookController
     public function __invoke(ServerRequestInterface $request)
     {
         $year = $request->getAttribute('id');
-        $book = yield from $this->repository->findBook($year);
+        $youtube = yield from $this->repository->findById($year);
 
-        if ($book === null) {
+        if ($youtube === null) {
             return Response::json(
                 [
-                    'data' => "Book not found\n"
+                    'data' => "Youtube not found\n"
                 ]
             )->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
         }
 
-        $data = $book->title;
+        $data = $youtube->title;
         return Response::json(
             [
                 'data' => $data

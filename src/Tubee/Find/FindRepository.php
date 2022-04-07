@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tubee\Book;
+namespace Tubee\Find;
 
 use Framework\Mysql\Mysql;
-use React\MySQL\QueryResult;
 
 /**
- * Class BookRepository
+ * Class FindRepository
  */
-class BookRepository
+class FindRepository
 {
     /**
      * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection|null
      */
     private $connection;
 
+    /**
+     * @var Mysql
+     */
     private $mysql;
 
     public function __construct(Mysql $mysql)
@@ -28,19 +30,18 @@ class BookRepository
     /**
      * @throws \Throwable
      */
-    public function findBook(string $year)
+    public function findById(string $id)
     {
         $connection = $this->mysql->getConnection();
         $result =  yield $connection->query(
-            'SELECT name FROM youtube WHERE id = ?',
-            [$year]
+            'SELECT * FROM youtube WHERE id = ?',
+            [$id]
         );
-        assert($result instanceof QueryResult);
 
         if (count($result->resultRows) === 0) {
             return null;
         }
 
-        return new Book($result->resultRows[0]['name']);
+        return new Youtube($result->resultRows[0]);
     }
 }

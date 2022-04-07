@@ -18,7 +18,11 @@ class AddController
         $this->addRepository = $addRepository;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return \RingCentral\Psr7\Response
+     */
+    public function __invoke(ServerRequestInterface $request): \RingCentral\Psr7\Response
     {
         $number = $request->getAttribute('number');
         $insertNumber = $this->addRepository->insertDumpData($number);
@@ -28,7 +32,7 @@ class AddController
                 [
                     'data' => "Insert completed\n"
                 ]
-            )->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
+            )->withStatus(StatusCodeInterface::STATUS_OK);
         }
     }
 }
