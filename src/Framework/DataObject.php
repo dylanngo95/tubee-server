@@ -7,7 +7,7 @@ namespace Framework;
 /**
  * Class DataObject
  */
-class DataObject implements \ArrayAccess
+class DataObject implements \ArrayAccess, \JsonSerializable
 {
     /** @var array $_data */
     protected $_data = array();
@@ -61,5 +61,10 @@ class DataObject implements \ArrayAccess
             return $this->_data;
         }
         return $this->_data[$key] ?? null;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->_data;
     }
 }

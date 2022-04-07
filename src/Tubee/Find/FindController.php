@@ -28,18 +28,18 @@ class FindController
      */
     public function __invoke(ServerRequestInterface $request)
     {
-        $year = $request->getAttribute('id');
-        $youtube = yield from $this->repository->findById($year);
+        $id = $request->getAttribute('id');
+        $youTubes = yield from $this->repository->findById($id);
 
-        if ($youtube === null) {
+        if (!$youTubes) {
             return Response::json(
                 [
-                    'data' => "Youtube not found\n"
+                    'data' => "Youtube not found"
                 ]
             )->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
         }
+        $data = json_encode($youTubes);
 
-        $data = $youtube->title;
         return Response::json(
             [
                 'data' => $data

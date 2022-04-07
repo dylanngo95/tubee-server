@@ -42,6 +42,11 @@ class FindRepository
             return null;
         }
 
-        return new Youtube($result->resultRows[0]);
+        $youTubes = [];
+        foreach ($result->resultRows as $resultRow) {
+            $youTubes[] = new YouTube($resultRow);
+        }
+
+        return $youTubes;
     }
 }
