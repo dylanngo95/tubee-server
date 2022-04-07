@@ -15,7 +15,7 @@ class SetupRepository
 
     public function __construct(Mysql $mysql)
     {
-        $this->connection = $mysql->getConnection();
+        $this->connection = $mysql->createNewConnection();
     }
 
     public function createInitTable()

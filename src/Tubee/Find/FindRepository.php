@@ -4,27 +4,19 @@ declare(strict_types=1);
 
 namespace Tubee\Find;
 
-use Framework\Mysql\Mysql;
+use Framework\Mysql\ConnectionPool;
 
 /**
  * Class FindRepository
  */
 class FindRepository
 {
-    /**
-     * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection|null
-     */
-    private $connection;
+    /** @var ConnectionPool $connectionPool */
+    private $connectionPool;
 
-    /**
-     * @var Mysql
-     */
-    private $mysql;
-
-    public function __construct(Mysql $mysql)
+    public function __construct(ConnectionPool $connectionPool)
     {
-        $this->mysql = $mysql;
-        $this->connection = $mysql->getConnection();
+        $this->connectionPool = $connectionPool;
     }
 
     /**
@@ -32,7 +24,7 @@ class FindRepository
      */
     public function findById(string $id)
     {
-        $connection = $this->mysql->getConnection();
+        $connection = $this->connectionPool->getConnection();
         $result =  yield $connection->query(
             'SELECT * FROM youtube WHERE id = ?',
             [$id]

@@ -12,44 +12,33 @@ use React\MySQL\Factory;
  */
 class Mysql
 {
-    /**
-     * @var array
-     */
-    protected $db = null;
-
-    /**
-     * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection
-     */
-    protected $connection = null;
+    /** @var Environment $environment */
+    private $environment;
 
     /**
      * @param Environment $environment
      */
     public function __construct(Environment $environment)
     {
-        $this->db = $environment->getDBConfig();
+        $this->environment = $environment;
     }
 
     /**
      * @return \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection
      */
-    public function getConnection()
+    public function createNewConnection()
     {
-        if ($this->connection) {
-            return $this->connection;
-        }
-
+        $dbConfig = $this->environment->getDBConfig();
         $mode = 'default';
-        $engine = $this->db['connection']['default']['engine'] ?? null;
-        $charset = $this->db['connection']['default']['charset'] ?? null;
+        $engine = $dbConfig['connection']['default']['engine'] ?? null;
+        $charset = $dbConfig['connection']['default']['charset'] ?? null;
 
-        $userName = $this->db['connection'][$mode]['username'] ?? null;
-        $passWord = $this->db['connection'][$mode]['password'] ?? null;
-        $dbName = $this->db['connection'][$mode]['dbname'] ?? null;
-        $host = $this->db['connection'][$mode]['host'] ?? null;
+        $userName = $dbConfig['connection'][$mode]['username'] ?? null;
+        $passWord = $dbConfig['connection'][$mode]['password'] ?? null;
+        $dbName = $dbConfig['connection'][$mode]['dbname'] ?? null;
+        $host = $dbConfig['connection'][$mode]['host'] ?? null;
 
         $credentials = "${userName}:${passWord}@${host}/${dbName}?idle=0.001?charset=${charset}";
-        $this->connection = (new Factory())->createLazyConnection($credentials);
-        return $this->connection;
+        return (new Factory())->createLazyConnection($credentials);
     }
 }

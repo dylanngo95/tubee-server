@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Tubee\Add;
 
-use Framework\Mysql\Mysql;
+use Framework\Mysql\ConnectionPool;
 use React\MySQL\Exception;
 use React\MySQL\QueryResult;
 
 class AddRepository
 {
-    /**
-     * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection|null
-     */
-    private $connection;
+    /** @var ConnectionPool $connectionPool */
+    private $connectionPool;
 
-    public function __construct(Mysql $mysql)
+    public function __construct(ConnectionPool $connectionPool)
     {
-        $this->connection = $mysql->getConnection();
+        $this->connectionPool = $connectionPool;
     }
 
     /**
@@ -29,7 +27,7 @@ class AddRepository
             $value = $date->getTimestamp();
             $query = "INSERT INTO `youtube` (`hash`, `name`, `link`, `status`, `created_at`, `updated_at`) VALUES ('hash ${value}', 'name ${value}', 'link ${value}', '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);";
 
-            $this->connection->query($query)->then(
+            $this->connectionPool->getConnection()->query($query)->then(
                 function (QueryResult $command) use ($query) {
                     echo 'Successfully ' . $query . PHP_EOL;
                 },

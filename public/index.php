@@ -1,6 +1,7 @@
 <?php
 
 use Framework\Config\Environment;
+use Framework\Mysql\ConnectionPool;
 use Framework\Mysql\Mysql;
 use Tubee\Add\AddController;
 use Tubee\Find\FindController;
@@ -14,10 +15,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $environment = new Environment();
 $container = new FrameworkX\Container([
-    Environment::class => fn() => new Environment(),
-    Mysql::class => function () use ($environment) {
-        return new Mysql($environment);
-    }
 ]);
 
 $app = new FrameworkX\App($container);
