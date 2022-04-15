@@ -38,7 +38,7 @@ class FindRepository
         foreach ($result->resultRows as $resultRow) {
             $youTubes[] = new YouTube($resultRow);
         }
-
+        $this->connectionPool->idleConnection($connection);
         return $youTubes;
     }
 }

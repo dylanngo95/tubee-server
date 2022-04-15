@@ -22,12 +22,14 @@ class AddRepository
      * Insert Dump
      */
     public function insertDumpData($n = 100000) {
+        $connection = $this->connectionPool->getConnection();
+
         for ($i = 0; $i < $n; $i++) {
             $date = date_create();
             $value = $date->getTimestamp();
             $query = "INSERT INTO `youtube` (`hash`, `name`, `link`, `status`, `created_at`, `updated_at`) VALUES ('hash ${value}', 'name ${value}', 'link ${value}', '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);";
 
-            $this->connectionPool->getConnection()->query($query)->then(
+            $connection->query($query)->then(
                 function (QueryResult $command) use ($query) {
                     echo 'Successfully ' . $query . PHP_EOL;
                 },
@@ -36,6 +38,7 @@ class AddRepository
                 }
             );;
         }
+        $this->connectionPool->idleConnection($connection);
     }
 
 }
