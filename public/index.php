@@ -1,8 +1,5 @@
 <?php
 
-use Framework\Config\Environment;
-use Framework\Mysql\ConnectionPool;
-use Framework\Mysql\Mysql;
 use Tubee\Add\AddController;
 use Tubee\Find\FindController;
 use Tubee\Home\HomeController;
@@ -13,7 +10,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 \define('PB', \dirname(__DIR__));
 
-$environment = new Environment();
 $container = new FrameworkX\Container([
 ]);
 

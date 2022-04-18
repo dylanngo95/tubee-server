@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Tubee\Youtube;
 
-use Base\Mysql\Mysql;
+use Framework\Mysql\ConnectionPool;
 
 /**
  * Class YoutubeRepository
  */
 class YoutubeRepository
 {
-    /**
-     * @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection|null
-     */
+    /** @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection  */
     private $connection;
 
-    public function __construct(Mysql $mysql)
+    /**
+     * @throws \Exception
+     */
+    public function __construct(ConnectionPool $connectionPool)
     {
-        $this->connection = $mysql->getConnection();
+        $this->connection = $connectionPool->getConnection();
     }
 
     public function getName(string $video)

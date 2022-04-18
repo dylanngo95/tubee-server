@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Framework\Mysql;
 
+use DateTime;
+
 /**
  * Class Connection
  */
@@ -12,17 +14,14 @@ class Connection
     public $connection;
     public $startTime;
 
-    private $mysql;
-
     public function __construct(
         Mysql $mysql
     ) {
-        $this->mysql = $mysql;
-        $this->connection = $this->mysql->createNewConnection();
-        $this->startTime = new \DateTime();
+        $this->connection = $mysql->createNewConnection();
+        $this->startTime = (new DateTime)->getTimestamp();
     }
 
-    public function createNewConnection() {
+    public function getConnection() {
         return $this->connection;
     }
 

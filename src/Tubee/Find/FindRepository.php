@@ -26,11 +26,12 @@ class FindRepository
     {
         $connection = $this->connectionPool->getConnection();
         $result =  yield $connection->query(
-            'SELECT * FROM youtube WHERE id = ?',
+            'SELECT * FROM youtube WHERE id = ? LIMIT 1',
             [$id]
         );
 
         if (count($result->resultRows) === 0) {
+            $this->connectionPool->idleConnection($connection);
             return null;
         }
 

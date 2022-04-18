@@ -1,6 +1,7 @@
 /data
 /vendor
 .env
-/public/app/env.php
+/src/app/env.php
 /public/static
 .idea
+./*.log

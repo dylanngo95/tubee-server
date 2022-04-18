@@ -36,7 +36,7 @@ class AddRepository
                 function (Exception $error) use ($query) {
                     echo 'Error ' . $query . PHP_EOL;
                 }
-            );;
+            );
         }
         $this->connectionPool->idleConnection($connection);
     }

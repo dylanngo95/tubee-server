@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Base\Config\Environment;
+use Framework\Config\Environment;
 
 if (PHP_SAPI !== 'cli') {
     echo 'bin/tubee must be run as a CLI application';
@@ -9,7 +9,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 try {
-    require __DIR__ . '/../public/app/bootstrap.php';
+    require __DIR__ . '/../src/app/bootstrap.php';
 } catch (\Exception $e) {
     echo 'Autoload error: ' . $e->getMessage();
     exit(1);

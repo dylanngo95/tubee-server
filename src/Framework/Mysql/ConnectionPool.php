@@ -9,8 +9,7 @@ namespace Framework\Mysql;
  */
 class ConnectionPool
 {
-    private $minIdle;
-    private $maxIdle;
+    private $idleTimeOut = 1000;
 
     private $minConnection = 100;
     private $maxConnection = 1000;
@@ -33,10 +32,10 @@ class ConnectionPool
      */
     public function initConnection() {
         for (;$this->minConnection > 0; $this->minConnection--) {
-            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql))->createNewConnection();
-            $key = spl_object_hash($connectionIdle);
+            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql));
+            $key = spl_object_hash($connectionIdle->getConnection());
             $this->connectionIdle[$key] = $connectionIdle;
-            $this->connectionCount += 1;
+            $this->connectionCount++;
         }
     }
 
@@ -52,16 +51,16 @@ class ConnectionPool
         if (count($this->connectionIdle) <= 0
             && $this->connectionCount <= $this->maxConnection
         ) {
-            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql))->createNewConnection();
-            $key = spl_object_hash($connectionIdle);
+            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql));
+            $key = spl_object_hash($connectionIdle->getConnection());
             $this->connectionIdle[$key] = $connectionIdle;
-            $this->connectionCount += 1;
+            $this->connectionCount++;
         }
 
         foreach ($this->connectionIdle as $key => $connectionIdle) {
             $this->connectionActive[$key] = $connectionIdle;
             unset($this->connectionIdle[$key]);
-            return $connectionIdle;
+            return $connectionIdle->getConnection();
         }
 
         throw new \Exception('Have not connection');
@@ -76,6 +75,7 @@ class ConnectionPool
                 unset($this->connectionActive[$key]);
             }
         }
+
     }
 
     public function closeConnection($connection)
@@ -85,8 +85,28 @@ class ConnectionPool
             if ($key == $keyClose) {
                 $this->connectionActive[$key]->quit();
                 unset($this->connectionActive[$key]);
-                $this->connectionCount -= 1;
+                $this->connectionCount--;
             }
+        }
+    }
+
+    public function freeIdleConnection()
+    {
+        $connectionIdleCount = count($this->connectionIdle) ?? 0;
+        if ($connectionIdleCount <= $this->minConnection) return;
+
+        foreach ($this->connectionIdle as $key => $connectionIdle) {
+            $connectionIdleCount = count($this->connectionIdle) ?? 0;
+            if ($connectionIdleCount <= $this->minConnection) return;
+
+            $startTime = $connectionIdle->getStartTime();
+            $now = (new \DateTime())->getTimestamp();
+            if ($now - $startTime <= $this->idleTimeOut) {
+                continue;
+            }
+            $this->connectionIdle[$key]->quit();
+            unset($this->connectionIdle[$key]);
+            $this->connectionCount--;
         }
     }
 }

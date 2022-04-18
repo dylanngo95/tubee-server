@@ -14,7 +14,7 @@ class Environment
 
     public function getEnvironment()
     {
-        return include_once PB . '/public/app/env.php';
+        return include_once PB . '/src/app/env.php';
     }
 
     public function getDBConfig() {
