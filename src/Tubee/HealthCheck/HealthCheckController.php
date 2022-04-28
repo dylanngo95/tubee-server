@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tubee\HeathCheck;
+namespace Tubee\HealthCheck;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
 /**
- * Class HeathCheckController
+ * Class HealthCheckController
  */
-class HeathCheckController
+class HealthCheckController
 {
     public function __invoke(ServerRequestInterface $request)
     {
