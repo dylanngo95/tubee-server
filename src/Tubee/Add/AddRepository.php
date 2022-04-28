@@ -8,6 +8,9 @@ use Framework\Mysql\ConnectionPool;
 use React\MySQL\Exception;
 use React\MySQL\QueryResult;
 
+/**
+ * Class AddRepository
+ */
 class AddRepository
 {
     /** @var ConnectionPool $connectionPool */

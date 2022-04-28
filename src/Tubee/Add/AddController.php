@@ -10,6 +10,9 @@ use Framework\Log\Writer\Stream;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
+/**
+ * Class AddController
+ */
 class AddController
 {
     /** @var AddRepository $addRepository */

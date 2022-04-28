@@ -2,6 +2,7 @@
 
 use Tubee\Add\AddController;
 use Tubee\Find\FindController;
+use Tubee\HeathCheck\HeathCheckController;
 use Tubee\Home\HomeController;
 use Tubee\Setup\SetupController;
 use Tubee\Youtube\YoutubeController;
@@ -19,6 +20,7 @@ $app->get('/', HomeController::class);
 $app->get('/init', SetupController::class);
 $app->get('/new/{number}', AddController::class);
 $app->get('/find/{id}', FindController::class);
+$app->get('/heath-check', HeathCheckController::class);
 $app->get('/youtube/{video}', YoutubeController::class);
 
 $app->run();
