@@ -11,8 +11,8 @@ class ConnectionPool
 {
     private $idleTimeOut = 1000;
 
-    private $minConnection = 100;
-    private $maxConnection = 1000;
+    private $minConnection = 200;
+    private $maxConnection = 500;
 
     private $connectionActive = [];
     private $connectionIdle = [];

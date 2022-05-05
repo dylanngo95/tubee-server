@@ -18,6 +18,9 @@ mkdir -p pub/static/mp3 var/log
 # Run application
 php pub/index.php
 
+# Run with production mode
+X_LISTEN=0.0.0.0:8080 php public/index.php
+
 # Download video with url: https://www.youtube.com/watch?v=akeytNVcIy4
 http://localhost:8080/download/akeytNVcIy4
 
