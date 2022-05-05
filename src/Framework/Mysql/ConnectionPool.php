@@ -96,7 +96,7 @@ class ConnectionPool
         $keyClose = spl_object_hash($connection);
         foreach ($this->connectionActive as $key => $connectionActive) {
             if ($key == $keyClose) {
-                $this->connectionActive[$key]->quit();
+                $this->connectionActive[$key]->getConnection()->quit();
                 unset($this->connectionActive[$key]);
                 $this->connectionCount--;
             }
@@ -138,7 +138,6 @@ class ConnectionPool
             echo 'Active Start Time - ' . $startTime . PHP_EOL;
             $now = (new \DateTime())->getTimestamp();
             if (($diff = $now - $startTime) <= $this->connectionTimeOut) {
-                echo 'Diff time - ' . $diff . PHP_EOL;
                 continue;
             }
             echo 'Active TimeOut - ' . $this->connectionTimeOut . PHP_EOL;
