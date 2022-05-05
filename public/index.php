@@ -23,6 +23,7 @@ $app->get('/', HomeController::class);
 $app->get('/init', SetupController::class);
 $app->get('/new/{number}', AddController::class);
 $app->get('/find/{id}', FindController::class);
+$app->get('/health-check', HealthCheckController::class);
 $app->get('/youtube/{video}', YoutubeController::class);
 $app->get('/health-check', HealthCheck::class);
 

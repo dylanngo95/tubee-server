@@ -6,6 +6,9 @@ namespace Tubee\Setup;
 
 use Framework\Mysql\Mysql;
 
+/**
+ * Class SetupRepository
+ */
 class SetupRepository
 {
     /**
