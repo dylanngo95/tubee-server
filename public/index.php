@@ -7,9 +7,12 @@ use Tubee\Home\HomeController;
 use Tubee\Setup\SetupController;
 use Tubee\Youtube\YoutubeController;
 
-require __DIR__ . '/../vendor/autoload.php';
-
-\define('PB', \dirname(__DIR__));
+try {
+    require __DIR__ . '/../src/app/bootstrap.php';
+} catch (\Exception $e) {
+    echo 'Load bootstrap error: ' . $e->getMessage();
+    exit(1);
+}
 
 $container = new FrameworkX\Container([
 ]);

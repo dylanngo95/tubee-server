@@ -21,9 +21,9 @@ class SetupRepository
     public function createInitTable()
     {
         $this->connection->query('CREATE TABLE `youtube` (
-        `id` INT NOT NULL AUTO_INCREMENT ,
-        `hash` VARCHAR(64) NOT NULL ,
-        `name` VARCHAR(255) NULL ,
+        `id` INT NOT NULL AUTO_INCREMENT,
+        `hash` VARCHAR(64) NOT NULL,
+        `name` VARCHAR(255) NULL,
         `link` VARCHAR(255) NULL,
         `status` TINYINT UNSIGNED NOT NULL DEFAULT 2,
         `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 

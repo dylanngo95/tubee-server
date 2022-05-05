@@ -2,6 +2,10 @@
 <?php
 
 use Framework\Config\Environment;
+use Framework\Mysql\ConnectionPool;
+use Framework\Mysql\Mysql;
+use React\MySQL\Exception;
+use React\MySQL\QueryResult;
 
 if (PHP_SAPI !== 'cli') {
     echo 'bin/tubee must be run as a CLI application';
@@ -17,30 +21,26 @@ try {
 
 try {
     $environment = new Environment();
-    $db = $environment->getDBConfig();
-
-    $mode = 'default';
-    $userName = $db['connection'][$mode]['username'] ?? null;
-    $passWord = $db['connection'][$mode]['password'] ?? null;
-    $dbName = $db['connection'][$mode]['dbname'] ?? null;
-    $host = $db['connection'][$mode]['host'] ?? null;
-
-    $connection = new PDO("mysql:host=$host;dbname=$dbName;charset=UTF8", $userName, $passWord);
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $mysql = new Mysql($environment);
+    $connectionPool = new ConnectionPool($mysql);
+    $connection = $connectionPool->getConnection();
 } catch (\Exception $e) {
     echo 'Load Application error: ' . $e;
-    exit();
+    exit(1);
 }
 
-$hash = $argv[1];
+$youtube = $argv[1];
 
 try {
     $staticPath = $environment->getStaticPath();
-    $youtube = "https://www.youtube.com/watch?v=${hash}";
+
     echo $youtube . "\n";
-    insertYoutube($connection, $hash, $youtube);
-    $output = shell_exec("cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube} | grep Destination ");
+    insertYoutube($connection, $youtube);
+
+    $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube} | grep Destination ";
+    $output = shell_exec($command);
     echo $output . "\n";
+
     $lines = preg_split("/\r\n|\n|\r/", $output);
     $name = '';
     foreach ($lines as $line) {
@@ -51,33 +51,50 @@ try {
             $name = trim($name);
         }
     }
-    updateYoutube($connection, $hash, $name, 1);
+
+    updateYoutube($connection, $youtube, $name, 1);
 } catch (\Exception $e) {
-    updateYoutube($connection, $hash, null, 0);
+    updateYoutube($connection, $youtube, null, 0);
     echo 'Downloading error:' . $e;
     exit(1);
 }
 
-function insertYoutube($connection, $hash, $link)
+/**
+ * @param $connection
+ * @param $youtube
+ * @return void
+ */
+function insertYoutube($connection, $youtube)
 {
-    $data = [
-        'hash' => $hash,
-        'link' => $link,
-        'status' => 2,
-    ];
-    $sql = "INSERT INTO youtube (hash, link, status) VALUES (:hash, :link, :status)";
-    $stmt= $connection->prepare($sql);
-    return $stmt->execute($data);
+    $value = $youtube;
+    $query = 'INSERT INTO youtube (hash, name, link, status)
+                VALUES (?,?,?, 1)';
+    $connection->query($query, [$value, $value, $value])->then(
+        function (QueryResult $command) use ($query) {
+            echo 'Successfully ' . $query . PHP_EOL;
+        },
+        function (Exception $error) use ($query) {
+            echo 'Error ' . $query . PHP_EOL;
+        }
+    );
 }
 
-function updateYoutube($connection, $hash, $name, $status)
+/**
+ * @param $connection
+ * @param $youtubeURL
+ * @param $name
+ * @param $status
+ * @return void
+ */
+function updateYoutube($connection, $youtubeURL, $name, $status)
 {
-    $data = [
-        'hash' => $hash,
-        'status' => $status,
-        'name' => $name
-    ];
-    $sql = "UPDATE youtube SET status=:status, name=:name WHERE hash=:hash";
-    $stmt= $connection->prepare($sql);
-    return $stmt->execute($data);
+    $query = 'UPDATE youtube SET status=?, name=? WHERE link=?';
+    $connection->query($query, [$status, $name, $youtubeURL])->then(
+        function (QueryResult $command) use ($query) {
+            echo 'Successfully ' . $query . PHP_EOL;
+        },
+        function (Exception $error) use ($query) {
+            echo 'Error ' . $query . PHP_EOL;
+        }
+    );
 }
