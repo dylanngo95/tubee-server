@@ -13,15 +13,8 @@ use React\Http\Message\Response;
  */
 class YoutubeController
 {
-    /**
-     * @var Environment $environment
-     */
-    protected $environment;
-
-    /**
-     * @var YoutubeRepository $youtubeRepository
-     */
-    private $youtubeRepository;
+    private Environment $environment;
+    private YoutubeRepository $youtubeRepository;
 
     /**
      * @param Environment $environment
@@ -37,12 +30,17 @@ class YoutubeController
 
     public function __invoke(ServerRequestInterface $request)
     {
-        $video = $request->getAttribute('video');
-        $videoName = yield from $this->youtubeRepository->getName($video);
+        $video = $request->getAttribute('v');
+        $youtube = yield from $this->youtubeRepository->getNameByHash($video);
+        if ($youtube) {
+            return Response::plaintext(
+                "Downloaded " . $youtube . "!\n"
+            );
+        }
 
-        $staticPath = $this->environment->getStaticPath();
         $youtube = "https://www.youtube.com/watch?v=${video}";
-        $this->execShellOnBackground("cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube}");
+        $command = "cd " . PB . " && bin/tubee ${youtube}";
+        $this->execShellOnBackground($command);
 
         return Response::plaintext(
             "Downloading " . $youtube . "!\n"

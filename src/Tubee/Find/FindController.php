@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tubee\Find;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Framework\Config\Environment;
 use Framework\Log\Logger;
 use Framework\Log\Writer\Stream;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,15 +19,18 @@ class FindController
     private FindRepository $repository;
     private Stream $stream;
     private Logger $logger;
+    private Environment $environment;
 
     public function __construct(
         FindRepository $repository,
         Stream $stream,
-        Logger $logger
+        Logger $logger,
+        Environment $environment
     ){
         $this->repository = $repository;
         $this->stream = $stream;
         $this->logger = $logger;
+        $this->environment = $environment;
     }
 
     /**
@@ -36,7 +40,8 @@ class FindController
     {
         $id = $request->getAttribute('id');
 
-        $writer = $this->stream->getWriter('find.log');
+        $logFolder = $this->environment->getLogPath();
+        $writer = $this->stream->getWriter($logFolder . '/find.log');
         $logger = $this->logger->addWriter($writer);
         $logger->write("Start Find ${id}");
 
@@ -56,7 +61,9 @@ class FindController
         $data = json_encode($youTubes);
         return Response::json(
             [
-                'message' => $data
+                'data' => $data,
+                'message' => '',
+                'code' => ''
             ]
         );
     }

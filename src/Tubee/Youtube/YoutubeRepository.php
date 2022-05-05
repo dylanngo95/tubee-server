@@ -22,10 +22,10 @@ class YoutubeRepository
         $this->connection = $connectionPool->getConnection();
     }
 
-    public function getName(string $video)
+    public function getNameByHash(string $hash)
     {
         $result = yield $this->connection->query('SELECT * FROM youtube WHERE hash = ?', [
-            $video
+            $hash
         ]);
 
         if (count($result->resultRows) === 0) {

@@ -5,3 +5,4 @@
 /public/static
 .idea
 ./*.log
+/var

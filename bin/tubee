@@ -29,15 +29,16 @@ try {
     exit(1);
 }
 
-$youtube = $argv[1];
+$youtube = processYoutubeUrl($argv[1]);
+$link = $youtube[0][0] ?? null;
+$hash = $youtube[0][6] ?? null;
 
 try {
     $staticPath = $environment->getStaticPath();
+    echo $link. "\n";
+    insertYoutube($connection, $link, $hash);
 
-    echo $youtube . "\n";
-    insertYoutube($connection, $youtube);
-
-    $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${youtube} | grep Destination ";
+    $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${link} | grep Destination ";
     $output = shell_exec($command);
     echo $output . "\n";
 
@@ -52,24 +53,35 @@ try {
         }
     }
 
-    updateYoutube($connection, $youtube, $name, 1);
+    updateYoutube($connection, $link, $name, 1);
 } catch (\Exception $e) {
-    updateYoutube($connection, $youtube, null, 0);
+    updateYoutube($connection, $link, null, 0);
     echo 'Downloading error:' . $e;
     exit(1);
 }
 
 /**
+ * @param $str
+ * @return mixed
+ */
+function processYoutubeUrl($str): array
+{
+    $re = '/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/im';
+    preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
+    return $matches;
+}
+
+/**
  * @param $connection
- * @param $youtube
+ * @param $link
+ * @param $hash
  * @return void
  */
-function insertYoutube($connection, $youtube)
+function insertYoutube($connection, $link, $hash)
 {
-    $value = $youtube;
     $query = 'INSERT INTO youtube (hash, name, link, status)
                 VALUES (?,?,?, 1)';
-    $connection->query($query, [$value, $value, $value])->then(
+    $connection->query($query, [$hash, null, $link])->then(
         function (QueryResult $command) use ($query) {
             echo 'Successfully ' . $query . PHP_EOL;
         },
@@ -81,15 +93,15 @@ function insertYoutube($connection, $youtube)
 
 /**
  * @param $connection
- * @param $youtubeURL
+ * @param $link
  * @param $name
  * @param $status
  * @return void
  */
-function updateYoutube($connection, $youtubeURL, $name, $status)
+function updateYoutube($connection, $link, $name, $status)
 {
     $query = 'UPDATE youtube SET status=?, name=? WHERE link=?';
-    $connection->query($query, [$status, $name, $youtubeURL])->then(
+    $connection->query($query, [$status, $name, $link])->then(
         function (QueryResult $command) use ($query) {
             echo 'Successfully ' . $query . PHP_EOL;
         },
