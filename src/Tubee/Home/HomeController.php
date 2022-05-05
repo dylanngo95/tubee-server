@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tubee\Home;
 
+use Framework\Config\Environment;
 use Framework\Log\Logger;
 use Framework\Log\Writer\Stream;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,18 +15,18 @@ use React\Http\Message\Response;
  */
 class HomeController
 {
-    /** @var Stream $stream */
-    private $stream;
-
-    /** @var Logger $logger */
-    private $logger;
+    private Stream $stream;
+    private Logger $logger;
+    private Environment $environment;
 
     public function __construct(
         Stream $stream,
-        Logger $logger
+        Logger $logger,
+        Environment $environment
     ) {
         $this->stream = $stream;
         $this->logger = $logger;
+        $this->environment = $environment;
     }
 
     /**
@@ -33,7 +34,8 @@ class HomeController
      */
     public function __invoke(ServerRequestInterface $request): Response
     {
-        $writer = $this->stream->getWriter('index.log');
+        $logFolder = $this->environment->getLogPath();
+        $writer = $this->stream->getWriter($logFolder . '/home.log');
         $logger = $this->logger->addWriter($writer);
         $logger->write("Start Home");
 
