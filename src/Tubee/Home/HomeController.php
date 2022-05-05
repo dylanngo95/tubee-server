@@ -28,6 +28,9 @@ class HomeController
         $this->logger = $logger;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __invoke(ServerRequestInterface $request): Response
     {
         $writer = $this->stream->getWriter('index.log');

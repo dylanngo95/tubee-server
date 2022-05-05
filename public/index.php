@@ -2,6 +2,7 @@
 
 use Tubee\Add\AddController;
 use Tubee\Find\FindController;
+use Tubee\HealthCheck\HealthCheck;
 use Tubee\Home\HomeController;
 use Tubee\Setup\SetupController;
 use Tubee\Youtube\YoutubeController;
@@ -20,5 +21,6 @@ $app->get('/init', SetupController::class);
 $app->get('/new/{number}', AddController::class);
 $app->get('/find/{id}', FindController::class);
 $app->get('/youtube/{video}', YoutubeController::class);
+$app->get('/health-check', HealthCheck::class);
 
 $app->run();
