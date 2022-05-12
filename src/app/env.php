@@ -3,7 +3,7 @@ return [
     'db' => [
         'connection' => [
             'default' => [
-                'host' => 'mysql',
+                'host' => '127.0.0.1',
                 'dbname' => 'tubee',
                 'username' => 'tubee',
                 'password' => '123456',

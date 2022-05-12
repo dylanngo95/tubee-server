@@ -42,4 +42,23 @@ class Stream
         }
         return $this->stream;
     }
+
+    /**
+     * @return resource
+     * @throws \Exception
+     */
+    public function createWriter(string $fileUrl = null)
+    {
+            $file = fopen($fileUrl, "a+") or throw new \Exception("Unable to open file!");
+            return $file;
+    }
+
+    /**
+     * @param $stream
+     * @return void
+     */
+    public function closeWrite($stream)
+    {
+        fclose($stream);
+    }
 }

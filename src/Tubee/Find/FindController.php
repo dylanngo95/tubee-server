@@ -21,6 +21,8 @@ class FindController
     private Logger $logger;
     private Environment $environment;
 
+    private $writer;
+
     public function __construct(
         FindRepository $repository,
         Stream $stream,
@@ -41,14 +43,16 @@ class FindController
         $id = $request->getAttribute('id');
 
         $logFolder = $this->environment->getLogPath();
-        $writer = $this->stream->getWriter($logFolder . '/find.log');
-        $logger = $this->logger->addWriter($writer);
-        $logger->write("Start Find ${id}");
+        if (!$this->writer) {
+            $this->writer = $this->stream->createWriter($logFolder . '/find.log');
+            $this->logger = $this->logger->addWriter($this->writer);
+        }
+        $this->logger->write("Start Find ${id}");
 
         $youTubes = yield from $this->repository->findById($id);
 
         if (!$youTubes) {
-            $logger->write("Error Find ${id}");
+            $this->logger->write("Error Find ${id}");
             return Response::json(
                 [
                     'message' => "Not found ${id}"
@@ -56,7 +60,7 @@ class FindController
             )->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
         }
 
-        $logger->write("End Find ${id}");
+        $this->logger->write("End Find ${id}");
 
         $data = json_encode($youTubes);
         return Response::json(

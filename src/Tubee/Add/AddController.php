@@ -21,6 +21,8 @@ class AddController
     private Stream $stream;
     private Environment $environment;
 
+    private $writer;
+
     public function __construct(
         AddRepository $addRepository,
         Stream $stream,
@@ -41,15 +43,17 @@ class AddController
     public function __invoke(ServerRequestInterface $request)
     {
         $logFolder = $this->environment->getLogPath();
-        $writer = $this->stream->getWriter($logFolder . '/add.log');
-        $logger = $this->logger->addWriter($writer);
+        if (!$this->writer) {
+            $this->writer = $this->stream->createWriter($logFolder . '/add.log');
+            $this->logger = $this->logger->addWriter($this->writer);
+        }
 
         $number = $request->getAttribute('number');
-        $logger->write("Start Add ${number}");
+        $this->logger->write("Start Add ${number}");
 
         $this->addRepository->insertDumpData($number);
 
-        $logger->write("End Add ${number}");
+        $this->logger->write("End Add ${number}");
 
         return Response::json(
             [

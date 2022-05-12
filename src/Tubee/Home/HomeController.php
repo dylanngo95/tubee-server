@@ -19,6 +19,8 @@ class HomeController
     private Logger $logger;
     private Environment $environment;
 
+    private $writer;
+
     public function __construct(
         Stream $stream,
         Logger $logger,
@@ -35,9 +37,11 @@ class HomeController
     public function __invoke(ServerRequestInterface $request): Response
     {
         $logFolder = $this->environment->getLogPath();
-        $writer = $this->stream->getWriter($logFolder . '/home.log');
-        $logger = $this->logger->addWriter($writer);
-        $logger->write("Start Home");
+        if (!$this->writer) {
+            $this->writer = $this->stream->createWriter($logFolder . '/home.log');
+            $this->logger = $this->logger->addWriter($this->writer);
+        }
+        $this->logger->write("Start Home");
 
         $execString = 'ps -eo comm,pcpu,pmem -u ${USER} --sort -pcpu | head -20';
         $process = "";
