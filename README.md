@@ -6,13 +6,16 @@ sudo apt-get install youtube-dl
 sudo ln -s /usr/bin/python3 /usr/bin/python
 sudo apt-get install ffmpeg
 
+# Update youtube-dl
+pip3 install --upgrade youtube-dl
+
 # Test download
 youtube-dl --ignore-errors -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o '%(title)s.%(ext)s' "$1"
-youtube-dl --extract-audio --audio-format mp3 <Video URL>
+youtube-dl --extract-audio --audio-format mp3 https://www.youtube.com/watch?v=akeytNVcIy4
 ```
 ## How to use application
 ```bash
-mkdir -p pub/static/mp3 var/log
+mkdir -p public/static/mp3 var/log
 # Install php 8.1
 
 # Run application

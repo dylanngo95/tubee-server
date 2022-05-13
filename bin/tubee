@@ -94,10 +94,10 @@ function processYoutubeUrl($str): array
  */
 function insertYoutube($connection, $link, $hash)
 {
-    $query = 'INSERT INTO youtube (hash, name, link, status) VALUES (?,?,?, 0)';
+    $query = 'INSERT INTO youtube (hash, name, link) VALUES (?,?,?)';
     $connection->query($query, [$hash, null, $link])->then(
         function (QueryResult $command) use ($query) {
-            echo 'Successfully ' . $query . PHP_EOL;
+//            echo 'Successfully ' . $query . PHP_EOL;
         },
         function (Exception $error) use ($query) {
             echo 'Error ' . $query . PHP_EOL;
@@ -121,7 +121,7 @@ function updateYoutube($connection, $link, $name, $status)
             Loop::stop();
         },
         function (Exception $error) use ($query) {
-            echo 'Error ' . $query . PHP_EOL;
+//            echo 'Error ' . $query . PHP_EOL;
             Loop::stop();
         }
     );
