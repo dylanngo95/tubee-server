@@ -30,23 +30,37 @@ class YoutubeController
 
     public function __invoke(ServerRequestInterface $request)
     {
-        $video = $request->getAttribute('v');
-        $youtube = yield from $this->youtubeRepository->getNameByHash($video);
-        if ($youtube) {
-            $linkFull = 'htpp://localhost:8080/mp3/' . $youtube;
+        $hash = $request->getAttribute('v');
+        $link = "https://www.youtube.com/watch?v=$hash";
+
+        $youtube = yield from $this->youtubeRepository->getYoutubeByHash($hash);
+
+        if (!$youtube) {
+            $this->youtubeRepository->saveYoutube($hash, $link);
             return Response::json([
                 'data' => [
-                    'link' => $linkFull
+                    'link' => $link,
+                    'status' => 'downloading'
                 ]
             ]);
         }
 
-        $youtube = "https://www.youtube.com/watch?v=${video}";
-        $command = "cd " . PB . " && bin/tubee ${youtube}";
-        $this->execShellOnBackground($command);
+        if ($youtube['status'] == 0) {
+            return Response::json([
+                'data' => [
+                    'link' => $link,
+                    'status' => 'downloading'
+                ]
+            ]);
+        }
 
+        $linkFull = 'htpp://localhost:8080/mp3/' . $youtube['name'];
         return Response::json([
-            'data' => 'downloading ' . $youtube
+            'data' => [
+                'link' => $link,
+                'link_download_mp3' => $linkFull,
+                'status' => 'done'
+            ]
         ]);
     }
 
@@ -56,11 +70,11 @@ class YoutubeController
      * @param string $cmd
      * @return void
      */
-    protected function execShellOnBackground(string $cmd) {
-        if (str_starts_with(php_uname(), "Windows")){
-            pclose(popen("start /B ". $cmd, "r"));
-        }
-        else {
+    protected function execShellOnBackground(string $cmd)
+    {
+        if (str_starts_with(php_uname(), "Windows")) {
+            pclose(popen("start /B " . $cmd, "r"));
+        } else {
             exec($cmd . " > /dev/null &");
         }
     }

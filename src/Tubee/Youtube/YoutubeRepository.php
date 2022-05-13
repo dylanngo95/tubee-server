@@ -6,6 +6,8 @@ namespace Tubee\Youtube;
 
 use Framework\Mysql\ConnectionPool;
 use React\MySQL\ConnectionInterface;
+use React\MySQL\Exception;
+use React\MySQL\QueryResult;
 
 /**
  * Class YoutubeRepository
@@ -22,7 +24,11 @@ class YoutubeRepository
         $this->connection = $connectionPool->getConnection();
     }
 
-    public function getNameByHash(string $hash)
+    /**
+     * @param string $hash
+     * @return \Generator|mixed|null
+     */
+    public function getYoutubeByHash(string $hash)
     {
         $result = yield $this->connection->query('SELECT * FROM youtube WHERE hash = ? LIMIT 1', [
             $hash
@@ -32,6 +38,27 @@ class YoutubeRepository
             return null;
         }
 
-        return $result->resultRows[0]['name'];
+        return $result->resultRows[0];
+    }
+
+    /**
+     * @param string $hash
+     * @param string $link
+     * @return void
+     */
+    public function saveYoutube(string $hash, string $link)
+    {
+        $query = 'INSERT INTO `youtube` (`hash`, `link`) VALUES (?,?)';
+        $this->connection->query($query, [
+            $hash,
+            $link
+        ])->then(
+            function (QueryResult $command) use ($query) {
+                echo 'Successfully ' . $query . PHP_EOL;
+            },
+            function (Exception $error) use ($query) {
+                echo 'Error ' . $query . PHP_EOL;
+            }
+        );
     }
 }

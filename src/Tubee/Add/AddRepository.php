@@ -27,7 +27,7 @@ class AddRepository
     public function insertDumpData($n = 100) {
         $connection = $this->connectionPool->getConnection();
 
-        $query = "INSERT INTO `youtube` (`hash`, `name`, `link`, `status`, `created_at`, `updated_at`) VALUES";
+        $query = 'INSERT INTO `youtube` (`hash`, `name`, `link`, `status`, `created_at`, `updated_at`) VALUES';
         for ($i = 0; $i < $n; $i++) {
             $date = date_create();
             $value = $date->getTimestamp();

@@ -22,9 +22,8 @@ try {
 }
 
 try {
-    $environment = new Environment();
-    $mysql = new Mysql($environment);
-    $connection = $mysql->createConnection(Loop::get());
+    $application = new \Framework\Cli();
+    $application->run();
 } catch (\Exception $e) {
     echo 'Load Application error: ' . $e;
     exit(1);
@@ -35,31 +34,31 @@ $link = $youtube[0][0] ?? null;
 $hash = $youtube[0][6] ?? null;
 
 try {
-    $staticPath = $environment->getStaticPath();
-    logger($environment, 'Start download: ' . $link);
-    insertYoutube($connection, $link, $hash);
-
-    $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${link} | grep Destination ";
-    $output = shell_exec($command);
-    logger($environment, 'Output ' . $output);
-
-    $lines = preg_split("/\r\n|\n|\r/", $output);
-    $name = '';
-    foreach ($lines as $line) {
-        $re = '/^\[ffmpeg] Destination:/';
-        preg_match_all($re, $line, $matches, PREG_SET_ORDER, 0);
-        if (count($matches)) {
-            $name = substr($line, strlen($matches[0][0]));
-            $name = trim($name);
-        }
-    }
-
-    updateYoutube($connection, $link, $name, 1);
-    Loop::run();
-    $connection->quit();
-    exit(0);
+//    $staticPath = $environment->getStaticPath();
+//    logger($environment, 'Start download: ' . $link);
+//    insertYoutube($connection, $link, $hash);
+//    logger($environment, 'Loop start');
+//
+//    $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${link} | grep Destination ";
+//    $output = shell_exec($command);
+//    logger($environment, 'Output: ' . $output);
+//
+//    $lines = preg_split("/\r\n|\n|\r/", $output);
+//    $name = '';
+//    foreach ($lines as $line) {
+//        $re = '/^\[ffmpeg] Destination:/';
+//        preg_match_all($re, $line, $matches, PREG_SET_ORDER, 0);
+//        if (count($matches)) {
+//            $name = substr($line, strlen($matches[0][0]));
+//            $name = trim($name);
+//        }
+//    }
+//
+//    updateYoutube($connection, $link, $name, 1);
+//    $connection->quit();
+//    exit(0);
 } catch (\Exception $e) {
-    updateYoutube($connection, $link, null, 0);
+//    updateYoutube($connection, $link, null, 0);
     echo 'Downloading error:' . $e;
     exit(1);
 }
