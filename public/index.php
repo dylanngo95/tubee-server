@@ -20,7 +20,7 @@ $container = new FrameworkX\Container([
 $app = new FrameworkX\App($container);
 
 $app->get('/', HomeController::class);
-$app->get('/init', SetupController::class);
+$app->get('/setup', SetupController::class);
 $app->get('/add/{number}', AddController::class);
 $app->get('/find/{id}', FindController::class);
 $app->get('/status', HealthCheckController::class);

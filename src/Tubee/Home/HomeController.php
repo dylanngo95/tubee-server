@@ -21,6 +21,11 @@ class HomeController
 
     private $writer;
 
+    /**
+     * @param Stream $stream
+     * @param Logger $logger
+     * @param Environment $environment
+     */
     public function __construct(
         Stream $stream,
         Logger $logger,

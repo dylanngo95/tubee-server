@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Framework\Mysql;
 
+use Framework\Config\Environment;
 use React\EventLoop\Loop;
 
 /**
@@ -11,8 +12,8 @@ use React\EventLoop\Loop;
  */
 class ConnectionPool
 {
-    private $idleTimeOut = 10;
-    private $connectionTimeOut = 100;
+    private $idleTimeOut = 100;
+    private $connectionTimeOut = 1000;
 
     private $minConnection = 100;
     private $maxConnection = 200;
@@ -21,12 +22,12 @@ class ConnectionPool
     private $connectionIdle = [];
     private $connectionCount = 0;
 
-    private $mysql;
+    private $environment;
 
     public function __construct(
-        Mysql $mysql
+        Environment $environment
     ){
-        $this->mysql = $mysql;
+        $this->environment = $environment;
         $this->initConnection();
     }
 
@@ -36,17 +37,16 @@ class ConnectionPool
     public function initConnection() {
         $initConnection = $this->minConnection;
         for (;$initConnection > 0; $initConnection--) {
-            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql));
-            $key = spl_object_hash($connectionIdle->getConnection());
+            $connectionIdle = (new \Framework\Mysql\Mysql($this->environment));
+            $key = spl_object_hash($connectionIdle->createLazyConnection());
             $this->connectionIdle[$key] = $connectionIdle;
             $this->connectionCount++;
         }
-
         // Remove connection Idle
         Loop::addPeriodicTimer(5, function () {
             $memory = memory_get_usage() / 1024;
             $formatted = number_format($memory, 3).'K';
-            echo "====================\n";
+            echo "=========================================\n";
             echo "Current memory usage: {$formatted}\n";
             $this->freeIdleConnection();
         });
@@ -64,8 +64,8 @@ class ConnectionPool
         if (count($this->connectionIdle) <= 0
             && $this->connectionCount <= $this->maxConnection
         ) {
-            $connectionIdle = (new \Framework\Mysql\Connection($this->mysql));
-            $key = spl_object_hash($connectionIdle->getConnection());
+            $connectionIdle = (new \Framework\Mysql\Mysql($this->environment));
+            $key = spl_object_hash($connectionIdle->createLazyConnection());
             $this->connectionIdle[$key] = $connectionIdle;
             $this->connectionCount++;
         }
@@ -133,7 +133,7 @@ class ConnectionPool
         echo '====================== Active' . PHP_EOL;
         // Remove active connection timeout
         foreach ($this->connectionActive as $key => $connectionActive) {
-            echo '====================== Active 1' . PHP_EOL;
+            echo '====================== Active Each' . PHP_EOL;
             $startTime = $connectionActive->getStartTime();
             echo 'Active Start Time - ' . $startTime . PHP_EOL;
             $now = (new \DateTime())->getTimestamp();

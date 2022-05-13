@@ -2,8 +2,10 @@
 <?php
 
 use Framework\Config\Environment;
-use Framework\Mysql\ConnectionPool;
+use Framework\Log\Logger;
+use Framework\Log\Writer\Stream;
 use Framework\Mysql\Mysql;
+use React\EventLoop\Loop;
 use React\MySQL\Exception;
 use React\MySQL\QueryResult;
 
@@ -22,8 +24,7 @@ try {
 try {
     $environment = new Environment();
     $mysql = new Mysql($environment);
-    $connectionPool = new ConnectionPool($mysql);
-    $connection = $connectionPool->getConnection();
+    $connection = $mysql->createConnection(Loop::get());
 } catch (\Exception $e) {
     echo 'Load Application error: ' . $e;
     exit(1);
@@ -35,12 +36,12 @@ $hash = $youtube[0][6] ?? null;
 
 try {
     $staticPath = $environment->getStaticPath();
-    echo $link. "\n";
+    logger($environment, 'Start download: ' . $link);
     insertYoutube($connection, $link, $hash);
 
     $command = "cd ${staticPath}/mp3 && youtube-dl --extract-audio --audio-format mp3 -o '%(title)s.%(ext)s' ${link} | grep Destination ";
     $output = shell_exec($command);
-    echo $output . "\n";
+    logger($environment, 'Output ' . $output);
 
     $lines = preg_split("/\r\n|\n|\r/", $output);
     $name = '';
@@ -54,10 +55,25 @@ try {
     }
 
     updateYoutube($connection, $link, $name, 1);
+    Loop::run();
+    $connection->quit();
+    exit(0);
 } catch (\Exception $e) {
     updateYoutube($connection, $link, null, 0);
     echo 'Downloading error:' . $e;
     exit(1);
+}
+
+/**
+ * @throws \Exception
+ */
+function logger($environment, $message) {
+    $logFolder = $environment->getLogPath();
+    $stream = new Stream();
+    $logger = new Logger();
+    $writer = $stream->createWriter($logFolder . '/app_cli.log');
+    $logger = $logger->addWriter($writer);
+    $logger->write($message);
 }
 
 /**
@@ -75,12 +91,10 @@ function processYoutubeUrl($str): array
  * @param $connection
  * @param $link
  * @param $hash
- * @return void
  */
 function insertYoutube($connection, $link, $hash)
 {
-    $query = 'INSERT INTO youtube (hash, name, link, status)
-                VALUES (?,?,?, 1)';
+    $query = 'INSERT INTO youtube (hash, name, link, status) VALUES (?,?,?, 0)';
     $connection->query($query, [$hash, null, $link])->then(
         function (QueryResult $command) use ($query) {
             echo 'Successfully ' . $query . PHP_EOL;
@@ -103,10 +117,12 @@ function updateYoutube($connection, $link, $name, $status)
     $query = 'UPDATE youtube SET status=?, name=? WHERE link=?';
     $connection->query($query, [$status, $name, $link])->then(
         function (QueryResult $command) use ($query) {
-            echo 'Successfully ' . $query . PHP_EOL;
+//            echo 'Successfully ' . $query . PHP_EOL;
+            Loop::stop();
         },
         function (Exception $error) use ($query) {
             echo 'Error ' . $query . PHP_EOL;
+            Loop::stop();
         }
     );
 }

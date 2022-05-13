@@ -13,8 +13,7 @@ use React\MySQL\QueryResult;
  */
 class AddRepository
 {
-    /** @var ConnectionPool $connectionPool */
-    private $connectionPool;
+    private ConnectionPool $connectionPool;
 
     public function __construct(ConnectionPool $connectionPool)
     {
@@ -23,6 +22,7 @@ class AddRepository
 
     /**
      * Insert Dump
+     * @throws \Exception
      */
     public function insertDumpData($n = 100) {
         $connection = $this->connectionPool->getConnection();
@@ -31,10 +31,10 @@ class AddRepository
         for ($i = 0; $i < $n; $i++) {
             $date = date_create();
             $value = $date->getTimestamp();
-            $queryValue[] = "('hash ${value}', 'name ${value}', 'link ${value}', '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+            $queryValue[] = "('hash $value', 'name $value', 'link $value', '1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         }
         $queryValue = join(",", $queryValue);
-        $query = "${query} $queryValue;";
+        $query = "$query $queryValue;";
         $connection->query($query)->then(
             function (QueryResult $command) use ($query) {
 //                echo 'Successfully ' . $query . PHP_EOL;

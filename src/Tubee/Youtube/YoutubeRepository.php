@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tubee\Youtube;
 
 use Framework\Mysql\ConnectionPool;
+use React\MySQL\ConnectionInterface;
 
 /**
  * Class YoutubeRepository
  */
 class YoutubeRepository
 {
-    /** @var \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection  */
-    private $connection;
+    private ConnectionInterface $connection;
 
     /**
      * @throws \Exception
@@ -24,7 +24,7 @@ class YoutubeRepository
 
     public function getNameByHash(string $hash)
     {
-        $result = yield $this->connection->query('SELECT * FROM youtube WHERE hash = ?', [
+        $result = yield $this->connection->query('SELECT * FROM youtube WHERE hash = ? LIMIT 1', [
             $hash
         ]);
 

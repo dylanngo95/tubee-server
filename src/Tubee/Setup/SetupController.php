@@ -12,11 +12,11 @@ use React\Http\Message\Response;
  */
 class SetupController
 {
-    /**
-     * @var SetupRepository $setupRepository
-     */
-    private $setupRepository;
+    private SetupRepository $setupRepository;
 
+    /**
+     * @param SetupRepository $setupRepository
+     */
     public function __construct(SetupRepository $setupRepository)
     {
         $this->setupRepository = $setupRepository;
@@ -25,9 +25,8 @@ class SetupController
     public function __invoke(ServerRequestInterface $request)
     {
         $this->setupRepository->createInitTable();
-//        $this->setupRepository->insertDumpData();
         return Response::json([
-            'data' => 'init db completed'
+            'data' => 'Database has initialize'
         ]);
     }
 }

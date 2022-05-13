@@ -49,15 +49,14 @@ class AddController
         }
 
         $number = $request->getAttribute('number');
+
         $this->logger->write("Start Add ${number}");
-
         $this->addRepository->insertDumpData($number);
-
         $this->logger->write("End Add ${number}");
 
         return Response::json(
             [
-                'data' => 'Insert completed',
+                'data' => 'Insert to youtube was completed',
                 'message' => '',
                 'code' => ''
             ]

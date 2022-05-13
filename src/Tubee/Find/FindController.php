@@ -23,6 +23,12 @@ class FindController
 
     private $writer;
 
+    /**
+     * @param FindRepository $repository
+     * @param Stream $stream
+     * @param Logger $logger
+     * @param Environment $environment
+     */
     public function __construct(
         FindRepository $repository,
         Stream $stream,

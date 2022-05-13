@@ -48,7 +48,7 @@ services:
       - app
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:5.1.0
     container_name: phpmyadmin
     links:
       - mysql

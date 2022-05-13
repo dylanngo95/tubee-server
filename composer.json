@@ -15,6 +15,7 @@
     "require": {
         "clue/framework-x": "dev-main",
         "react/mysql": "^0.5.6",
-        "clue/stdio-react": "^2.5"
+        "clue/stdio-react": "^2.5",
+        "clue/block-react": "1.2"
     }
 }

@@ -11,8 +11,7 @@ use Framework\Mysql\ConnectionPool;
  */
 class FindRepository
 {
-    /** @var ConnectionPool $connectionPool */
-    private $connectionPool;
+    private ConnectionPool $connectionPool;
 
     public function __construct(ConnectionPool $connectionPool)
     {

@@ -33,18 +33,21 @@ class YoutubeController
         $video = $request->getAttribute('v');
         $youtube = yield from $this->youtubeRepository->getNameByHash($video);
         if ($youtube) {
-            return Response::plaintext(
-                "Downloaded " . $youtube . "!\n"
-            );
+            $linkFull = 'htpp://localhost:8080/mp3/' . $youtube;
+            return Response::json([
+                'data' => [
+                    'link' => $linkFull
+                ]
+            ]);
         }
 
         $youtube = "https://www.youtube.com/watch?v=${video}";
         $command = "cd " . PB . " && bin/tubee ${youtube}";
         $this->execShellOnBackground($command);
 
-        return Response::plaintext(
-            "Downloading " . $youtube . "!\n"
-        );
+        return Response::json([
+            'data' => 'downloading ' . $youtube
+        ]);
     }
 
     /**

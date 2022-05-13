@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Framework\Mysql;
 
+use DateTime;
 use Framework\Config\Environment;
+use React\EventLoop\LoopInterface;
+use React\MySQL\ConnectionInterface;
 use React\MySQL\Factory;
+use function Clue\React\Block\await;
 
 /**
  * Class Mysql
  */
 class Mysql
 {
-    /** @var Environment $environment */
-    private $environment;
+    private Environment $environment;
+    private ConnectionInterface $connection;
+    private int $startTime;
 
     /**
      * @param Environment $environment
@@ -24,10 +29,10 @@ class Mysql
     }
 
     /**
-     * @return \React\MySQL\ConnectionInterface|\React\MySQL\Io\LazyConnection
+     * @return string
      */
-    public function createNewConnection()
-    {
+    protected function getConnectionString() {
+
         $dbConfig = $this->environment->getDBConfig();
         $mode = 'default';
         $engine = $dbConfig['connection']['default']['engine'] ?? null;
@@ -38,7 +43,45 @@ class Mysql
         $dbName = $dbConfig['connection'][$mode]['dbname'] ?? null;
         $host = $dbConfig['connection'][$mode]['host'] ?? null;
 
-        $credentials = "${userName}:${passWord}@${host}/${dbName}?idle=0.001?charset=${charset}";
-        return (new Factory())->createLazyConnection($credentials);
+        return "$userName:$passWord@$host/$dbName?idle=0.001?charset=$charset";
     }
+
+    /**
+     * @return ConnectionInterface
+     */
+    public function createLazyConnection()
+    {
+        $this->startTime = (new DateTime())->getTimestamp();
+        $this->connection = (new Factory())->createLazyConnection($this->getConnectionString());
+        return $this->connection;
+    }
+
+    /**
+     * @param LoopInterface $loop
+     * @return ConnectionInterface
+     * @throws \Exception
+     */
+    public function createConnection(LoopInterface $loop)
+    {
+        $factory = new Factory($loop);
+        $promise = $factory->createConnection($this->getConnectionString());
+        return await($promise, $loop, 10.0);
+    }
+
+    /**
+     * @return ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
 }
