@@ -22,7 +22,7 @@ class SetupController
         $this->setupRepository = $setupRepository;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): Response
     {
         $this->setupRepository->createInitTable();
         return Response::json([

@@ -37,8 +37,16 @@ CREATE TABLE `youtube` (
 SQL;
     }
 
-    public function createInitTable()
+    public function createInitTable(): void
     {
-        $this->connection->query($this->getDataTable());
+        $this->connection->query($this->getDataTable())
+            ->then(
+                function ($command) {
+                    echo $command;
+                },
+                function ($error) {
+                    echo $error;
+                }
+            );
     }
 }
